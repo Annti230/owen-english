@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>英文跟讀練習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF3F1;--ink:#1F3A3D;--soft:#5E7F7B;--card:#FFFFFF;--line:#D3E1DD;
+  --accent:#F2B84B;--accent-ink:#3A2A05;--them:#E3ECE9;--you:#2F7A6F;--you-ink:#FFFFFF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#132326;--ink:#E4EEEB;--soft:#9DB8B3;--card:#1C3135;--line:#2B4549;
+    --them:#24403F;--you:#6FC2B4;--you-ink:#0E2422;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#132326;--ink:#E4EEEB;--soft:#9DB8B3;--card:#1C3135;--line:#2B4549;
+  --them:#24403F;--you:#6FC2B4;--you-ink:#0E2422;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  line-height:1.6;
+}
+.en{font-family:"Nunito","Segoe UI",system-ui,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+header h1{font-size:1.35rem;margin:4px 0 2px;font-weight:700}
+header p{margin:0;color:var(--soft);font-size:.95rem}
+
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:16px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:5px}
+.levels button{font:inherit;border:none;background:transparent;color:var(--ink);border-radius:12px;padding:10px 4px;cursor:pointer;font-size:.92rem;line-height:1.3}
+.levels button small{display:block;font-size:.75rem;color:var(--soft)}
+.levels button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.levels button[aria-pressed="true"] small{color:var(--bg);opacity:.8}
+.lvdesc{margin:8px 2px 0;font-size:.88rem;color:var(--soft)}
+.weeks{display:flex;gap:8px;flex-wrap:wrap;padding:16px 0 4px}
+.weeks::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);color:var(--ink);
+  border-radius:999px;padding:8px 14px;font:inherit;font-size:.92rem;cursor:pointer;
+}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip .done{color:var(--you);font-weight:700}
+.chip[aria-pressed="true"] .done{color:var(--accent)}
+.scenes{display:flex;gap:8px;flex-wrap:wrap;padding:8px 0 16px}
+.scenes .chip{border-radius:10px;font-size:.88rem;padding:6px 12px}
+
+.stage{
+  background:var(--card);border-radius:22px;padding:22px 20px 20px;
+  border:1.5px solid var(--line);
+}
+.meta{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--soft);margin-bottom:14px}
+.who{font-weight:700;font-size:.95rem;color:var(--ink)}
+.bubble{
+  border-radius:20px;padding:22px 20px;min-height:150px;
+  display:flex;flex-direction:column;justify-content:center;gap:8px;
+  background:var(--them);transition:background .25s,color .25s;
+  position:relative;
+}
+.bubble.you{background:var(--you);color:var(--you-ink)}
+.bubble .line{font-size:clamp(1.5rem,5.5vw,2.2rem);font-weight:800;line-height:1.25;margin:0}
+.bubble .line.hidden{filter:blur(9px);user-select:none}
+.bubble .line.hint{opacity:.55}
+.bubble .zh{font-size:1rem;margin:0;opacity:.85}
+
+.turn{
+  display:flex;align-items:center;gap:14px;margin-top:14px;min-height:56px;
+}
+.ring{width:56px;height:56px;flex:0 0 56px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .num{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:1.2rem}
+.turn .msg{font-size:1.05rem;font-weight:700}
+.turn .sub{font-size:.85rem;color:var(--soft);font-weight:400}
+
+.controls{display:flex;gap:10px;margin-top:18px;align-items:center;flex-wrap:wrap}
+.btn{
+  font:inherit;border:none;border-radius:14px;cursor:pointer;
+  padding:12px 16px;font-size:1rem;background:var(--them);color:var(--ink);
+}
+.btn.primary{background:var(--accent);color:var(--accent-ink);font-weight:700;padding:14px 26px;font-size:1.08rem;flex:1 1 160px}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,.chip:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.settings{
+  margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;
+}
+.set{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px}
+.set label{display:block;font-size:.85rem;color:var(--soft);margin-bottom:6px}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;font:inherit;font-size:.9rem;border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:7px 6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.rec{margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.9rem;color:var(--soft)}
+.rec .btn{font-size:.92rem;padding:10px 14px}
+.rec .btn.on{background:#D9534F;color:#fff}
+.hidebar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  background:var(--accent);color:var(--accent-ink);border-radius:14px;padding:10px 12px;margin-bottom:16px;font-size:.92rem;font-weight:700}
+.hidebar .seg{flex:0 1 220px}
+.hidebar .seg button{border-color:var(--accent-ink);color:var(--accent-ink);background:transparent}
+.hidebar .seg button[aria-pressed="true"]{background:var(--accent-ink);color:var(--accent)}
+.note{font-size:.85rem;color:var(--soft);margin-top:24px;line-height:1.7}
+.warn{background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:10px 14px;margin-top:12px;font-size:.9rem;display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>英文跟讀練習</h1>
+    <p>按「開始」，聽一句、跟著說一句。說錯沒關係，開口最重要。</p>
+  </header>
+
+  <nav class="levels" id="levels" aria-label="選擇階段"></nav>
+  <p class="lvdesc" id="lvdesc"></p>
+  <nav class="weeks" id="weeks" aria-label="選擇週次"></nav>
+  <div class="scenes" id="scenes" aria-label="選擇情境"></div>
+
+  <section class="stage" aria-live="polite">
+    <div class="hidebar">
+      <span>👀 聽力挑戰：英文要不要先藏起來？</span>
+      <div class="seg" id="hideSeg">
+        <button data-v="0" aria-pressed="true">顯示英文</button>
+        <button data-v="1" aria-pressed="false">隱藏英文</button>
+      </div>
+    </div>
+    <div class="meta"><span class="who" id="who">準備好了嗎？</span><span id="count"></span></div>
+    <div class="bubble" id="bubble">
+      <p class="line en" id="line">Ready?</p>
+      <p class="zh" id="zh">按下面的「開始」就會開始唸</p>
+    </div>
+    <div class="turn" id="turn" hidden>
+      <div class="ring">
+        <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+          <circle cx="28" cy="28" r="24" fill="none" stroke="var(--line)" stroke-width="5"/>
+          <circle id="arc" cx="28" cy="28" r="24" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="0"/>
+        </svg>
+        <span class="num" id="num">3</span>
+      </div>
+      <div><div class="msg" id="msg">換你說！</div><div class="sub" id="sub">大聲跟著唸出來</div></div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="prev" aria-label="上一句">‹ 上一句</button>
+      <button class="btn primary" id="play">▶ 開始</button>
+      <button class="btn" id="next" aria-label="下一句">下一句 ›</button>
+    </div>
+    <div class="controls">
+      <button class="btn" id="again">🔊 這句再聽一次</button>
+      <button class="btn" id="slow">🐢 慢速聽</button>
+    </div>
+    <div class="rec">
+      <button class="btn" id="recBtn">🎙 錄我的聲音</button>
+      <span id="recMsg">錄完會播給你聽，跟示範比一比</span>
+    </div>
+    <div class="warn" id="warn"></div>
+  </section>
+
+  <div class="settings">
+    <div class="set">
+      <label>練習方式</label>
+      <div class="seg" id="modeSeg">
+        <button data-v="dialog" aria-pressed="true">對話練習</button>
+        <button data-v="shadow" aria-pressed="false">跟讀每一句</button>
+      </div>
+    </div>
+    <div class="set">
+      <label>語速</label>
+      <div class="seg" id="rateSeg">
+        <button data-v="0.7" aria-pressed="false">慢</button>
+        <button data-v="0.85" aria-pressed="true">適中</button>
+        <button data-v="1" aria-pressed="false">正常</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="note">
+    對話練習：對方先問 → 你試著回答 → 聽示範 → 你再說一次。<br>
+    跟讀每一句：每句都先聽，再跟著唸。<br>
+    建議用 Chrome 或手機瀏覽器，並把音量打開。每天練一個情境就很棒了。
+  </p>
+</div>
+
+<script>
+const L1 = [
+ {week:"第1週 打招呼", scenes:[
+  {id:"w1s1", name:"茶水間遇到", pairs:[
+   ["How's it going?","最近好嗎？","Good, thanks. And you?","不錯，謝謝。你呢？"],
+   ["Good morning!","早安！","Good morning! How are you?","早安！你好嗎？"],
+   ["Did you have lunch?","你吃午餐了嗎？","Not yet. I'm going now.","還沒，我現在要去吃。"],
+   ["Busy day?","今天很忙嗎？","Yes, a little busy today.","對，今天有點忙。"]]},
+  {id:"w1s2", name:"下班說再見", pairs:[
+   ["See you tomorrow!","明天見！","See you!","再見！"],
+   ["Have a nice weekend!","週末愉快！","Thanks, you too!","謝謝，你也是！"],
+   ["Are you going home?","你要回家了嗎？","Yes, I'm going home now.","對，我現在要回家了。"],
+   ["Take care!","保重喔！","You too. Bye!","你也是，掰掰！"]]},
+  {id:"w1s3", name:"聽不懂的時候", pairs:[
+   ["Do you know where the meeting room is?","你知道會議室在哪嗎？","Sorry, could you say that again?","抱歉，可以再說一次嗎？"],
+   ["The meeting is at three in room B.","會議三點在 B 會議室。","Sorry, could you speak slowly, please?","抱歉，可以說慢一點嗎？"],
+   ["Can you send me the file?","可以把檔案寄給我嗎？","Sorry, can you write it down for me?","抱歉，可以幫我寫下來嗎？"],
+   ["Do you want some coffee?","你要喝點咖啡嗎？","Yes, please. Thank you!","好，麻煩你，謝謝！"]]}
+ ]},
+ {week:"第2週 聊生活", scenes:[
+  {id:"w2s1", name:"聊週末", pairs:[
+   ["What did you do this weekend?","你這週末做了什麼？","I went shopping with my friends.","我跟朋友去逛街。"],
+   ["How was your weekend?","你週末過得怎樣？","It was good. I stayed home and rested.","很好，我待在家休息。"],
+   ["Any plans for the weekend?","週末有什麼計畫嗎？","Not really. Maybe I'll watch a movie.","沒什麼，可能會看部電影。"],
+   ["That sounds nice!","聽起來很不錯！","Yeah. How about you?","對啊，那你呢？"]]},
+  {id:"w2s2", name:"聊吃的", pairs:[
+   ["What are you eating?","你在吃什麼？","It's beef noodles. It's very popular in Taiwan.","是牛肉麵，在台灣很受歡迎。"],
+   ["Is it spicy?","會辣嗎？","A little bit. Do you want to try?","有一點，你要吃吃看嗎？"],
+   ["Any good restaurants nearby?","附近有好吃的餐廳嗎？","Yes, there's a good one across the street.","有，對面有一家很好吃。"],
+   ["What's your favorite food?","你最喜歡吃什麼？","I like hot pot.","我喜歡吃火鍋。"]]},
+  {id:"w2s3", name:"聊天氣", pairs:[
+   ["It's so hot today!","今天好熱！","Yes, it's really hot.","對，真的很熱。"],
+   ["Is it going to rain?","會下雨嗎？","Maybe. Bring an umbrella.","可能會，帶把傘吧。"],
+   ["It rains a lot here.","這裡很常下雨。","Yes, especially in winter.","對啊，尤其是冬天。"],
+   ["Is it cold in winter?","冬天會冷嗎？","Not very cold, but it's wet.","不會很冷，但很濕。"]]}
+ ]},
+ {week:"第3週 工作對話", scenes:[
+  {id:"w3s1", name:"同事找你幫忙", pairs:[
+   ["Can you help me with this?","可以幫我處理這個嗎？","Sure, no problem.","當然，沒問題。"],
+   ["Do you have a minute?","你有空一下嗎？","Yes, what's up?","有，怎麼了？"],
+   ["Could you check this for me?","可以幫我確認一下這個嗎？","OK, let me check.","好，我看一下。"],
+   ["I need this file.","我需要這個檔案。","OK. When do you need it?","好，你什麼時候要？"]]},
+  {id:"w3s2", name:"開會", pairs:[
+   ["Are you joining the meeting?","你會來開會嗎？","Yes, I'll be there.","會，我會到。"],
+   ["The meeting is moved to four.","會議改到四點了。","OK, got it. Thanks.","好，知道了，謝謝。"],
+   ["Any questions?","有問題嗎？","No, it's all clear.","沒有，都很清楚。"],
+   ["Can you share your screen?","你可以分享螢幕嗎？","Sure, one moment.","好，等我一下。"]]},
+  {id:"w3s3", name:"問進度", pairs:[
+   ["How's the project going?","專案進行得怎樣？","It's going well.","進行得很順利。"],
+   ["Is it finished?","做完了嗎？","Almost. I need one more day.","快好了，我還需要一天。"],
+   ["Can you send it to me?","可以寄給我嗎？","Sure, I'll send it this afternoon.","好，我今天下午寄給你。"],
+   ["Great job!","做得很好！","Thank you!","謝謝！"]]}
+ ]},
+ {week:"第4週 聊久一點", scenes:[
+  {id:"w4s1", name:"認識新同事", pairs:[
+   ["Hi, I'm Tom. I'm new here.","嗨，我是 Tom，我是新來的。","Hi Tom! Welcome to the team.","嗨 Tom！歡迎加入。"],
+   ["How long have you worked here?","你在這裡工作多久了？","About three years.","大概三年。"],
+   ["What do you do here?","你在這裡負責什麼？","I work in the design team.","我在設計部門工作。"],
+   ["I'm from Canada.","我來自加拿大。","Oh, cool! How do you like Taiwan?","喔，很酷！你喜歡台灣嗎？"]]},
+  {id:"w4s2", name:"推薦好去處", pairs:[
+   ["I want to go somewhere this weekend.","我這週末想出去走走。","You should go to Jiufen. It's beautiful.","你可以去九份，很漂亮。"],
+   ["How do I get there?","要怎麼去？","You can take a bus from Taipei.","可以從台北搭公車去。"],
+   ["Is it crowded?","人會很多嗎？","Yes, on weekends. Go early in the morning.","週末會，早上早點去。"],
+   ["Thanks for the tip!","謝謝你的建議！","You're welcome. Have fun!","不客氣，玩得開心！"]]},
+  {id:"w4s3", name:"下班閒聊", pairs:[
+   ["You look tired.","你看起來很累。","Yes, I worked late yesterday.","對，我昨天加班到很晚。"],
+   ["Do you want to grab dinner?","要不要一起吃晚餐？","Sure! What do you want to eat?","好啊！你想吃什麼？"],
+   ["How about Japanese food?","日本料理怎麼樣？","Sounds great. Let's go!","聽起來很棒，走吧！"],
+   ["Your English is getting better!","你的英文越來越好了！","Thank you! I'm practicing every day.","謝謝！我每天都在練習。"]]}
+ ]},
+ {week:"第5週 餐廳吃飯", scenes:[
+  {id:"w5s1", name:"走進餐廳", pairs:[
+   ["Hi, how many people?","你好，請問幾位？","Two, please.","兩位，謝謝。"],
+   ["Do you have a reservation?","請問有訂位嗎？","No, we don't.","沒有。"],
+   ["Inside or outside?","要坐裡面還是外面？","Inside, please.","裡面，謝謝。"],
+   ["Here's the menu.","這是菜單。","Thank you.","謝謝。"]]},
+  {id:"w5s2", name:"點餐", pairs:[
+   ["Are you ready to order?","可以點餐了嗎？","Yes, I'd like the chicken pasta, please.","可以，我想要雞肉義大利麵。"],
+   ["Anything to drink?","要喝點什麼嗎？","A glass of water, please.","一杯水，謝謝。"],
+   ["Would you like a starter?","要點前菜嗎？","No, thank you. That's all.","不用，謝謝，這樣就好。"],
+   ["How would you like your steak?","牛排要幾分熟？","Medium, please.","五分熟，謝謝。"]]},
+  {id:"w5s3", name:"吃完結帳", pairs:[
+   ["How was everything?","餐點都還滿意嗎？","It was delicious, thank you!","很好吃，謝謝！"],
+   ["Would you like anything else?","還需要什麼嗎？","Can I have the check, please?","可以幫我結帳嗎？"],
+   ["Would you like to split the bill?","要分開付嗎？","Yes, separately, please.","對，分開付，謝謝。"],
+   ["Cash or card?","付現還是刷卡？","Card, please.","刷卡，謝謝。"]]}
+ ]},
+ {week:"第6週 買東西", scenes:[
+  {id:"w6s1", name:"逛街", pairs:[
+   ["Can I help you?","需要幫忙嗎？","I'm just looking, thanks.","我只是看看，謝謝。"],
+   ["Are you looking for something?","你在找什麼嗎？","Yes, do you have this in blue?","對，這個有藍色的嗎？"],
+   ["What size do you need?","你要什麼尺寸？","Medium, please.","M 號，謝謝。"],
+   ["Would you like to try it on?","要試穿看看嗎？","Yes, where is the fitting room?","好，試衣間在哪裡？"]]},
+  {id:"w6s2", name:"付錢", pairs:[
+   ["That's twenty-five dollars.","總共二十五元。","Can I pay by card?","可以刷卡嗎？"],
+   ["Do you need a bag?","需要袋子嗎？","No, thanks.","不用，謝謝。"],
+   ["Do you have a member card?","有會員卡嗎？","No, I don't.","沒有。"],
+   ["Here's your receipt.","這是你的收據。","Thank you. Have a nice day!","謝謝，祝你有美好的一天！"]]},
+  {id:"w6s3", name:"買咖啡", pairs:[
+   ["What can I get for you?","要點什麼呢？","A large latte, please.","一杯大杯拿鐵，謝謝。"],
+   ["Hot or iced?","要熱的還是冰的？","Iced, please.","冰的，謝謝。"],
+   ["For here or to go?","內用還是外帶？","To go, please.","外帶，謝謝。"],
+   ["Anything else?","還需要別的嗎？","That's all. Thank you.","這樣就好，謝謝。"]]}
+ ]},
+ {week:"第7週 旅遊問路", scenes:[
+  {id:"w7s1", name:"問路", pairs:[
+   ["You look lost. Can I help you?","你好像迷路了，需要幫忙嗎？","Yes, how do I get to the train station?","對，請問火車站怎麼走？"],
+   ["Go straight and turn left.","直走然後左轉。","Is it far from here?","離這裡遠嗎？"],
+   ["It's about ten minutes on foot.","走路大概十分鐘。","Great, thank you so much!","太好了，非常謝謝你！"],
+   ["Do you need a map?","你需要地圖嗎？","No, I'm OK. Thanks!","不用，我可以的，謝謝！"]]},
+  {id:"w7s2", name:"搭車買票", pairs:[
+   ["Where do you want to go?","你要去哪裡？","To the airport, please.","麻煩到機場。"],
+   ["How can I help you?","有什麼需要嗎？","One ticket to the city center, please.","一張到市中心的票，謝謝。"],
+   ["One way or round trip?","單程還是來回？","One way, please.","單程，謝謝。"],
+   ["The train leaves at three fifteen.","火車三點十五分開。","Which platform is it?","在哪個月台？"]]},
+  {id:"w7s3", name:"飯店入住", pairs:[
+   ["Welcome! Are you checking in?","歡迎！要辦入住嗎？","Yes, I have a reservation under Chen.","對，我用陳的名字訂房。"],
+   ["Can I see your passport?","可以看一下護照嗎？","Sure, here you go.","好，在這裡。"],
+   ["Breakfast is from seven to ten.","早餐是七點到十點。","Where is the restaurant?","餐廳在哪裡？"],
+   ["Your room is on the fifth floor.","你的房間在五樓。","Thank you. What's the Wi-Fi password?","謝謝。請問 Wi-Fi 密碼是什麼？"]]}
+ ]},
+ {week:"第8週 出國大小事", scenes:[
+  {id:"w8s1", name:"機場報到", pairs:[
+   ["Can I see your passport and ticket?","可以看一下護照和機票嗎？","Here you go.","在這裡。"],
+   ["Window or aisle seat?","要靠窗還是靠走道？","Window, please.","靠窗，謝謝。"],
+   ["How many bags are you checking?","要托運幾件行李？","Just one.","只有一件。"],
+   ["What's the purpose of your visit?","你來的目的是什麼？","Sightseeing.","觀光。"]]},
+  {id:"w8s2", name:"身體不舒服", pairs:[
+   ["What's the problem?","哪裡不舒服？","I have a headache.","我頭痛。"],
+   ["How long have you had it?","痛多久了？","Since yesterday.","從昨天開始。"],
+   ["Do you have any allergies?","你有對什麼過敏嗎？","No, I don't.","沒有。"],
+   ["Take this twice a day.","這個一天吃兩次。","OK. After meals?","好，飯後吃嗎？"]]},
+  {id:"w8s3", name:"旅途交朋友", pairs:[
+   ["Where are you from?","你從哪裡來？","I'm from Taiwan.","我來自台灣。"],
+   ["Is this your first time here?","這是你第一次來嗎？","Yes, it's my first time.","對，這是我第一次來。"],
+   ["How long are you staying?","你會待多久？","About one week.","大概一個禮拜。"],
+   ["Can you take a photo for us?","可以幫我們拍張照嗎？","Sure! Say cheese!","當然！笑一個！"]]}
+ ]}
+];
+const MORE = [{"name": "第二階段 進階", "desc": "回答說兩句，加上原因，還會反問", "weeks": [{"week": "第1週 職場閒聊", "scenes": [{"id": "a1s1", "name": "早上寒暄", "pairs": [["Morning! You're early today.", "早！你今天好早。", "Yes, the traffic was good. I usually come at nine.", "對，今天不塞車。我平常九點到。"], ["Did you sleep well?", "你睡得好嗎？", "Not really. I watched a show until midnight.", "不太好，我看劇看到半夜。"], ["How was your commute?", "通勤還順利嗎？", "It was OK. The MRT was really crowded, though.", "還好，不過捷運真的好擠。"], ["Want to grab a coffee?", "要不要一起去買咖啡？", "Sure! Let me get my wallet first.", "好啊！我先拿一下錢包。"]]}, {"id": "a1s2", "name": "午餐時間", "pairs": [["Where do you usually have lunch?", "你通常在哪吃午餐？", "I usually eat at the food court downstairs. It's cheap and fast.", "我通常在樓下美食街吃，便宜又快。"], ["Do you want to join us for lunch?", "要跟我們一起吃午餐嗎？", "I'd love to. Where are you going?", "很樂意，你們要去哪？"], ["Do you bring your own lunch?", "你會自己帶便當嗎？", "Sometimes. I cook on Sundays for the whole week.", "有時候，我週日會煮一整週的份。"], ["That place is always busy.", "那家店總是很多人。", "Yes. Let's go a bit earlier next time.", "對，下次早一點去吧。"]]}, {"id": "a1s3", "name": "下班前", "pairs": [["Are you working late today?", "你今天要加班嗎？", "No, I'm leaving on time. I'm having dinner with my family.", "不會，我要準時走，要跟家人吃晚餐。"], ["Any plans tonight?", "今晚有什麼計畫嗎？", "Not really. I just want to relax at home.", "沒有，只想在家放鬆。"], ["You've been busy all day.", "你忙了一整天。", "Yes, but I finished most of my work.", "對，但大部分工作都做完了。"], ["See you on Monday!", "星期一見！", "See you! Enjoy your weekend.", "再見！週末愉快。"]]}]}, {"week": "第2週 聊興趣", "scenes": [{"id": "a2s1", "name": "休閒活動", "pairs": [["What do you do in your free time?", "你空閒時都做什麼？", "I like hiking. There are many mountains near Taipei.", "我喜歡爬山，台北附近有很多山。"], ["How often do you go?", "你多久去一次？", "About twice a month, usually on Sunday mornings.", "大概一個月兩次，通常是週日早上。"], ["Do you go alone?", "你自己去嗎？", "No, I usually go with friends. It's more fun.", "不是，通常跟朋友去，比較好玩。"], ["Can I join you next time?", "下次我可以一起去嗎？", "Of course! I'll let you know.", "當然！我再跟你說。"]]}, {"id": "a2s2", "name": "運動", "pairs": [["Do you exercise?", "你有在運動嗎？", "A little. I go to the gym twice a week after work.", "一點點，我每週下班去健身房兩次。"], ["What sports do you like?", "你喜歡什麼運動？", "I like badminton. It's very popular in Taiwan.", "我喜歡羽毛球，在台灣很受歡迎。"], ["Are you good at it?", "你打得好嗎？", "Not really, but I enjoy it.", "不太好，但我很喜歡。"], ["Let's play together sometime.", "找時間一起打吧。", "Sounds great. Are you free this Saturday?", "好啊，你這週六有空嗎？"]]}, {"id": "a2s3", "name": "電影音樂", "pairs": [["Have you seen any good movies lately?", "最近有看什麼好電影嗎？", "Yes, I watched a Japanese movie last week. It was really touching.", "有，我上週看了一部日本電影，很感人。"], ["What kind of music do you like?", "你喜歡什麼音樂？", "I like pop music. I listen to it on my way to work.", "我喜歡流行音樂，上班路上都會聽。"], ["Do you watch Netflix?", "你有看 Netflix 嗎？", "Yes, I'm watching a Korean drama now. It's so good.", "有，我現在在看一部韓劇，很好看。"], ["Can you recommend one?", "可以推薦一部嗎？", "Sure, I'll send you the name later.", "好啊，我等一下傳名字給你。"]]}]}, {"week": "第3週 工作溝通", "scenes": [{"id": "a3s1", "name": "請別人幫忙", "pairs": [["What's up?", "怎麼了？", "Could you help me with this report? I'm not sure about the numbers.", "可以幫我看這份報告嗎？我不確定這些數字。"], ["Sure, what do you need?", "好啊，需要我做什麼？", "Can you check the second page for me? Thank you so much.", "可以幫我檢查第二頁嗎？非常感謝。"], ["When do you need it?", "你什麼時候要？", "By Friday, if possible. Is that OK?", "如果可以的話星期五前，可以嗎？"], ["No problem. I'll do it tomorrow.", "沒問題，我明天弄。", "Thanks a lot. I really appreciate it.", "太感謝了，真的很謝謝你。"]]}, {"id": "a3s2", "name": "回報問題", "pairs": [["Is everything OK?", "一切還好嗎？", "Not really. My computer keeps shutting down.", "不太好，我的電腦一直關機。"], ["Did you call IT?", "你有打給 IT 嗎？", "Yes, but nobody answered. I'll try again later.", "有，但沒人接，我等一下再打。"], ["Can you still work?", "你還能工作嗎？", "Yes, I'm using my laptop for now.", "可以，我先用筆電。"], ["Let me know if you need help.", "需要幫忙再跟我說。", "Thanks. I will.", "謝謝，我會的。"]]}, {"id": "a3s3", "name": "確認細節", "pairs": [["Please send the file to the client.", "請把檔案寄給客戶。", "Sure. Which version should I send?", "好，我要寄哪個版本？"], ["The final one.", "最終版。", "OK. Should I copy you on the email?", "好，要副本給你嗎？"], ["Yes, please.", "好，麻煩了。", "Got it. I'll send it before lunch.", "了解，我午餐前寄出。"], ["Did you get my message?", "你有收到我的訊息嗎？", "Yes, I did. Sorry, I forgot to reply.", "有，抱歉我忘記回了。"]]}]}, {"week": "第4週 會議討論", "scenes": [{"id": "a4s1", "name": "表示同意", "pairs": [["I think we should start next week.", "我覺得我們下週開始。", "I agree. That gives us more time to prepare.", "我同意，這樣有更多時間準備。"], ["What do you think about this design?", "你覺得這個設計怎樣？", "I like it. The colors look very clean.", "我喜歡，顏色看起來很乾淨。"], ["Does everyone agree?", "大家都同意嗎？", "Yes, it sounds good to me.", "是的，我覺得很好。"], ["Let's go with plan A.", "我們就用 A 方案吧。", "OK. I think that's the best choice.", "好，我覺得那是最好的選擇。"]]}, {"id": "a4s2", "name": "提出不同看法", "pairs": [["Let's finish it by tomorrow.", "我們明天前完成吧。", "Hmm, that might be difficult. Can we have two more days?", "嗯，可能有點難，可以再給兩天嗎？"], ["Is this price OK?", "這個價格可以嗎？", "I'm not sure. It seems a little high to me.", "我不確定，我覺得有點高。"], ["Any concerns?", "有什麼顧慮嗎？", "Just one. We don't have enough people for this.", "只有一個，我們人手不夠。"], ["Why do you think so?", "你為什麼這樣想？", "Because the last project took three weeks.", "因為上個專案花了三週。"]]}, {"id": "a4s3", "name": "提出建議", "pairs": [["Any ideas?", "有什麼想法嗎？", "Maybe we can ask the design team for help.", "也許我們可以請設計部幫忙。"], ["How can we save time?", "我們要怎麼節省時間？", "We could have shorter meetings.", "我們可以把會議開短一點。"], ["What should we do first?", "我們應該先做什麼？", "I think we should talk to the client first.", "我覺得應該先跟客戶談。"], ["Good idea. Can you take care of it?", "好主意，你可以負責嗎？", "Sure, I'll email them today.", "好，我今天寄信給他們。"]]}]}, {"week": "第5週 餐廳進階", "scenes": [{"id": "a5s1", "name": "特殊需求", "pairs": [["Are you ready to order?", "可以點餐了嗎？", "Yes. Can I have this without onions? I don't eat them.", "可以。這道可以不要洋蔥嗎？我不吃洋蔥。"], ["Any allergies?", "有過敏嗎？", "Yes, I'm allergic to peanuts. Please be careful.", "有，我對花生過敏，請小心。"], ["How spicy would you like it?", "要多辣？", "Not too spicy, please. Just a little.", "不要太辣，一點點就好。"], ["Would you like rice or bread?", "要飯還是麵包？", "Rice, please. Can I get a small portion?", "飯，謝謝。可以小份嗎？"]]}, {"id": "a5s2", "name": "請店員推薦", "pairs": [["Is this your first time here?", "第一次來嗎？", "Yes, it is. What do you recommend?", "對，你推薦什麼？"], ["Our fish is very popular.", "我們的魚很受歡迎。", "Sounds good. Is it enough for two people?", "聽起來不錯，兩個人吃夠嗎？"], ["Would you like dessert?", "要甜點嗎？", "What kind of desserts do you have?", "你們有什麼甜點？"], ["We have cheesecake and ice cream.", "我們有起司蛋糕和冰淇淋。", "I'll have the cheesecake, please.", "我要起司蛋糕，謝謝。"]]}, {"id": "a5s3", "name": "上錯菜", "pairs": [["How is your food?", "餐點還好嗎？", "Sorry, I think this isn't what I ordered.", "抱歉，這好像不是我點的。"], ["Oh, what did you order?", "喔，你點的是什麼？", "I ordered the chicken, not the beef.", "我點的是雞肉，不是牛肉。"], ["I'm so sorry. I'll change it right away.", "非常抱歉，我馬上幫你換。", "No problem. Thank you.", "沒關係，謝謝。"], ["Is everything OK now?", "現在都沒問題了嗎？", "Yes, it's perfect. Thanks for your help.", "對，很完美，謝謝你的幫忙。"]]}]}, {"week": "第6週 購物進階", "scenes": [{"id": "a6s1", "name": "換貨", "pairs": [["How can I help you?", "有什麼需要幫忙？", "I bought this yesterday, but it's too small. Can I exchange it?", "我昨天買的，但太小了，可以換嗎？"], ["Do you have the receipt?", "有收據嗎？", "Yes, here it is.", "有，在這裡。"], ["Would you like a bigger size?", "要換大一號嗎？", "Yes, a large, please. Can I try it on first?", "好，換 L 號，可以先試穿嗎？"], ["Or would you like a refund?", "還是你要退款？", "No, an exchange is fine. Thank you.", "不用，換貨就好，謝謝。"]]}, {"id": "a6s2", "name": "比較商品", "pairs": [["Which one are you interested in?", "你對哪一個有興趣？", "I'm not sure. What's the difference between these two?", "我不確定，這兩個差在哪？"], ["This one has a longer battery life.", "這個電池比較耐用。", "I see. Is it much more expensive?", "了解，貴很多嗎？"], ["It's about twenty dollars more.", "大概貴二十元。", "Hmm, let me think about it.", "嗯，我考慮一下。"], ["This one is our best seller.", "這是我們賣最好的。", "OK, I'll take that one.", "好，我買那個。"]]}, {"id": "a6s3", "name": "問優惠", "pairs": [["Anything else today?", "今天還需要什麼嗎？", "Do you have any discounts right now?", "現在有什麼優惠嗎？"], ["It's ten percent off if you buy two.", "買兩個打九折。", "Great. I'll take two then.", "太好了，那我買兩個。"], ["Would you like to join our membership?", "要加入會員嗎？", "Is it free? What are the benefits?", "免費嗎？有什麼好處？"], ["You get points every time you shop.", "每次購物都能集點。", "OK, sounds good. I'll sign up.", "好，聽起來不錯，我加入。"]]}]}, {"week": "第7週 旅遊進階", "scenes": [{"id": "a7s1", "name": "房間有問題", "pairs": [["How can I help you?", "有什麼可以幫你？", "The air conditioner in my room isn't working.", "我房間的冷氣壞了。"], ["I'm sorry. What's your room number?", "抱歉，你的房號是？", "It's room 512.", "512 號房。"], ["We'll send someone right away.", "我們馬上派人過去。", "Thank you. How long will it take?", "謝謝，大概要多久？"], ["Is there anything else?", "還有其他需要嗎？", "Yes, could I get two more towels, please?", "有，可以再給我兩條毛巾嗎？"]]}, {"id": "a7s2", "name": "規劃行程", "pairs": [["Do you need any help?", "需要幫忙嗎？", "Yes, what are some good places to visit nearby?", "是的，附近有什麼好玩的地方？"], ["The old town is very popular.", "老城區很受歡迎。", "How do I get there from here?", "從這裡要怎麼去？"], ["You can take the number five bus.", "可以搭五號公車。", "How long does it take?", "要多久？"], ["About twenty minutes.", "大概二十分鐘。", "Great. Is it open on Mondays?", "太好了，星期一有開嗎？"]]}, {"id": "a7s3", "name": "交通延誤", "pairs": [["Sorry, the train is delayed.", "抱歉，火車誤點了。", "Oh no. How long is the delay?", "喔不，誤點多久？"], ["About one hour.", "大概一小時。", "Can I change to an earlier train?", "我可以換更早的車嗎？"], ["Let me check for you.", "我幫你查一下。", "Thank you. I have a meeting at five.", "謝謝，我五點有個會議。"], ["There's one at two thirty.", "兩點半有一班。", "Perfect. I'll take that one.", "太好了，我搭那班。"]]}]}, {"week": "第8週 生活求助", "scenes": [{"id": "a8s1", "name": "東西不見了", "pairs": [["Can I help you?", "需要幫忙嗎？", "I think I left my bag on the train.", "我好像把包包忘在火車上了。"], ["What does it look like?", "長什麼樣子？", "It's a small black backpack.", "是一個小的黑色後背包。"], ["What's inside?", "裡面有什麼？", "My wallet and my phone charger.", "我的錢包和手機充電器。"], ["Please fill out this form.", "請填這張表。", "OK. Will you call me if you find it?", "好，找到的話會打給我嗎？"]]}, {"id": "a8s2", "name": "打電話預約", "pairs": [["Hello, how can I help you?", "你好，有什麼需要？", "Hi, I'd like to make an appointment, please.", "你好，我想預約。"], ["What day works for you?", "哪一天方便？", "Is Thursday afternoon OK?", "星期四下午可以嗎？"], ["We have three or four o'clock.", "有三點或四點。", "Three o'clock, please.", "三點，謝謝。"], ["Can I have your name?", "請問貴姓？", "It's Lin. L-I-N.", "我姓林，L-I-N。"]]}, {"id": "a8s3", "name": "跟鄰居聊天", "pairs": [["Hi! Are you new here?", "嗨！你是新搬來的嗎？", "Yes, I just moved in last week.", "對，我上週剛搬來。"], ["How do you like the neighborhood?", "你覺得這附近怎麼樣？", "I like it. It's quiet and close to the station.", "我喜歡，很安靜又離車站近。"], ["Do you need anything?", "需要什麼幫忙嗎？", "Actually, where is the nearest supermarket?", "其實，最近的超市在哪裡？"], ["It's just around the corner.", "轉角就有。", "Thanks! Nice to meet you.", "謝謝！很高興認識你。"]]}]}]}, {"name": "第三階段 流利", "desc": "多說幾句，分享經驗和想法", "weeks": [{"week": "第1週 分享經驗", "scenes": [{"id": "b1s1", "name": "聊旅行", "pairs": [["Have you traveled abroad?", "你出過國嗎？", "Yes, I went to Japan last year. I visited Tokyo and Kyoto. The food was amazing.", "有，我去年去日本，去了東京和京都，食物超好吃。"], ["What was your favorite part?", "你最喜歡哪個部分？", "I loved the temples in Kyoto. It was so peaceful there.", "我很喜歡京都的寺廟，那裡好寧靜。"], ["Would you go again?", "你會再去嗎？", "Definitely. Next time I want to visit Hokkaido in winter.", "一定會，下次我想冬天去北海道。"], ["Where do you want to go next?", "你下一個想去哪？", "Maybe Europe. I've always wanted to see Paris.", "也許歐洲，我一直很想去巴黎。"]]}, {"id": "b1s2", "name": "聊家鄉", "pairs": [["Where did you grow up?", "你在哪裡長大？", "I grew up in Tainan. It's in the south of Taiwan, and it's famous for its food.", "我在台南長大，在台灣南部，以美食聞名。"], ["What's it like there?", "那裡是什麼樣子？", "It's warmer than Taipei, and life is slower. People are very friendly.", "比台北暖，生活步調比較慢，人很友善。"], ["Do you go back often?", "你常回去嗎？", "About once a month. My parents still live there.", "大概一個月一次，我爸媽還住那裡。"], ["What should I eat in Tainan?", "在台南該吃什麼？", "You should try beef soup for breakfast. It's very fresh.", "你一定要吃牛肉湯當早餐，很新鮮。"]]}, {"id": "b1s3", "name": "聊工作經歷", "pairs": [["How did you start working here?", "你怎麼來這裡工作的？", "I saw the job online and applied. I've been here for three years now.", "我在網路上看到職缺就應徵了，現在待三年了。"], ["What did you do before?", "你之前做什麼？", "I worked at a small company. It was a good experience, but I wanted to learn more.", "我在一家小公司，經驗很好，但我想學更多。"], ["What do you like about your job?", "你喜歡工作的哪個部分？", "I like my team. Everyone helps each other.", "我喜歡我的團隊，大家互相幫忙。"], ["Is it ever stressful?", "會有壓力嗎？", "Sometimes, especially before deadlines. But I try to stay calm.", "有時候，尤其是截止日前，但我盡量保持冷靜。"]]}]}, {"week": "第2週 表達意見", "scenes": [{"id": "b2s1", "name": "喜好比較", "pairs": [["Do you prefer the city or the countryside?", "你比較喜歡城市還是鄉下？", "I prefer the city because it's convenient. But I like visiting the countryside on weekends.", "我比較喜歡城市，因為很方便。但週末喜歡去鄉下走走。"], ["Coffee or tea?", "咖啡還是茶？", "Tea, actually. Coffee makes me too nervous.", "其實是茶，咖啡會讓我太緊張。"], ["Do you like working from home?", "你喜歡在家工作嗎？", "Sometimes. It saves time, but I miss talking to people.", "有時候，可以省時間，但我會想念跟人聊天。"], ["Summer or winter?", "夏天還是冬天？", "Winter. Taiwan's summer is too hot for me.", "冬天，台灣的夏天對我來說太熱了。"]]}, {"id": "b2s2", "name": "給朋友建議", "pairs": [["I'm so tired these days.", "我最近好累。", "Maybe you should take a day off. You've been working really hard.", "也許你該請一天假，你最近真的很拚。"], ["I want to learn Chinese.", "我想學中文。", "You should practice with us at lunch. We can teach you some useful words.", "你可以午餐時跟我們練習，我們可以教你一些實用的字。"], ["I can't sleep well.", "我睡不好。", "Try not to use your phone before bed. It really helps me.", "睡前試著不要滑手機，對我真的很有用。"], ["What should I buy for my mom?", "我該買什麼給我媽？", "How about a scarf? It's useful and not too expensive.", "圍巾怎麼樣？實用又不會太貴。"]]}, {"id": "b2s3", "name": "聊生活趨勢", "pairs": [["Do you use AI tools at work?", "你工作上會用 AI 工具嗎？", "Yes, I use them to check my writing. They save me a lot of time.", "會，我用來檢查我寫的東西，幫我省很多時間。"], ["Do you think they're helpful?", "你覺得有幫助嗎？", "I think so, but I still check everything myself.", "我覺得有，但我還是會自己再檢查一次。"], ["Do you shop online a lot?", "你常網購嗎？", "Yes, almost every week. It's easy, but sometimes I buy too much.", "對，幾乎每週，很方便，但有時候會買太多。"], ["Do people in Taiwan use cash?", "台灣人還用現金嗎？", "Some still do, but many people use mobile payment now.", "有些人還會，但現在很多人用行動支付。"]]}]}, {"week": "第3週 職場溝通", "scenes": [{"id": "b3s1", "name": "報告進度", "pairs": [["Can you give us a quick update?", "可以簡單報告一下進度嗎？", "Sure. We finished the first part last week. Now we're working on the design.", "好，我們上週完成第一部分，現在在做設計。"], ["Any problems so far?", "目前有遇到問題嗎？", "Just one. We're still waiting for the client's feedback.", "只有一個，我們還在等客戶的回饋。"], ["When will you hear back?", "什麼時候會有回覆？", "They said by Wednesday. I'll follow up if I don't hear from them.", "他們說星期三前，沒消息的話我會追蹤。"], ["Sounds good. Thanks.", "聽起來不錯，謝謝。", "No problem. I'll keep you updated.", "不客氣，我會隨時跟你更新。"]]}, {"id": "b3s2", "name": "說明原因", "pairs": [["Why is the project late?", "專案為什麼延遲？", "We had to change the design. The client asked for some new features.", "我們必須修改設計，客戶要求加一些新功能。"], ["Could we have avoided it?", "本來可以避免嗎？", "Maybe. Next time we should confirm the details earlier.", "也許，下次我們應該早點確認細節。"], ["What do you need from me?", "你需要我做什麼？", "Could you talk to the client? I think they'll listen to you.", "你可以跟客戶談談嗎？我覺得他們會聽你的。"], ["OK, I'll call them today.", "好，我今天打給他們。", "Thank you. That would really help.", "謝謝，那真的很有幫助。"]]}, {"id": "b3s3", "name": "喬時間", "pairs": [["Can we meet tomorrow at ten?", "我們明天十點開會可以嗎？", "Sorry, I have another meeting then. How about two in the afternoon?", "抱歉，那時我有別的會，下午兩點可以嗎？"], ["Two doesn't work for me.", "兩點我不行。", "OK. Are you free on Thursday morning?", "好，那星期四早上有空嗎？"], ["Thursday is fine.", "星期四可以。", "Great. I'll send you a calendar invite.", "太好了，我寄行事曆邀請給你。"], ["Should we meet online?", "要線上開會嗎？", "Online is fine. I'll add a video link.", "線上可以，我會附上視訊連結。"]]}]}, {"week": "第4週 會議發言", "scenes": [{"id": "b4s1", "name": "開場", "pairs": [["Would you like to start?", "你要先開始嗎？", "Sure. Today I'd like to talk about our plan for next month.", "好的，今天我想談我們下個月的計畫。"], ["How long will it take?", "大概要多久？", "About ten minutes. Please feel free to ask questions.", "大約十分鐘，有問題請隨時問。"], ["We can't see your slides.", "我們看不到你的簡報。", "Sorry, let me share my screen again. Can you see it now?", "抱歉，我重新分享螢幕，現在看得到嗎？"], ["Yes, we can see it.", "看得到了。", "Great. Let's get started.", "太好了，我們開始吧。"]]}, {"id": "b4s2", "name": "回答提問", "pairs": [["Can you explain this part again?", "這部分可以再解釋一次嗎？", "Of course. This chart shows our sales from last year.", "當然，這張圖是我們去年的銷售。"], ["Why did sales go down in March?", "為什麼三月銷售下降？", "Good question. It was because of the holiday. Many customers were traveling.", "好問題，是因為連假，很多客戶出去旅行。"], ["What's your plan to fix it?", "你打算怎麼改善？", "We want to start the promotion earlier this year.", "我們今年想提早開始促銷。"], ["I'm not sure I follow.", "我不太懂你的意思。", "Sorry, let me say it another way.", "抱歉，我換個方式說。"]]}, {"id": "b4s3", "name": "總結", "pairs": [["Can you sum it up?", "你可以總結一下嗎？", "Sure. We'll start in May, and the budget is the same as last year.", "好，我們五月開始，預算跟去年一樣。"], ["What are the next steps?", "下一步是什麼？", "First, I'll talk to the sales team. Then I'll send everyone a report.", "首先我會跟業務部談，然後寄報告給大家。"], ["Anything else?", "還有其他的嗎？", "No, that's all from me. Thank you for your time.", "沒有了，我就說到這裡，謝謝大家。"], ["Thanks, great presentation.", "謝謝，報告得很好。", "Thank you. Let me know if you have any questions.", "謝謝，有問題再跟我說。"]]}]}, {"week": "第5週 社交場合", "scenes": [{"id": "b5s1", "name": "公司聚餐", "pairs": [["Cheers! Thanks for coming.", "乾杯！謝謝你來。", "Cheers! Thank you for inviting me. The food looks great.", "乾杯！謝謝你邀請我，食物看起來很棒。"], ["Have you tried this dish?", "你吃過這道菜嗎？", "Not yet. What is it?", "還沒，這是什麼？"], ["It's a local specialty.", "這是當地的特色菜。", "It's really good. I'd like to come here again.", "真的很好吃，我想再來。"], ["Do you want another drink?", "要再喝一杯嗎？", "No, thanks. I'm driving tonight.", "不用，謝謝，我今晚要開車。"]]}, {"id": "b5s2", "name": "歡迎與歡送", "pairs": [["Today is my last day here.", "今天是我在這裡的最後一天。", "Really? We'll miss you. Good luck with your new job!", "真的嗎？我們會想你的，新工作加油！"], ["Thanks for all your help.", "謝謝你一直以來的幫忙。", "It was a pleasure working with you. Let's keep in touch.", "跟你共事很愉快，保持聯絡喔。"], ["This is Anna. She just joined our team.", "這是 Anna，她剛加入我們團隊。", "Hi Anna, welcome! Let me know if you need anything.", "嗨 Anna，歡迎！有需要隨時跟我說。"], ["Could you show her around?", "你可以帶她認識環境嗎？", "Sure. Anna, let me show you the kitchen first.", "好，Anna，我先帶你去茶水間。"]]}, {"id": "b5s3", "name": "聊台灣節日", "pairs": [["What do people do for Moon Festival?", "中秋節大家都做什麼？", "We usually have a barbecue with family. We also eat mooncakes and pomelos.", "我們通常跟家人烤肉，也會吃月餅和柚子。"], ["Why a barbecue?", "為什麼要烤肉？", "I think it started from a TV ad. Now almost everyone does it.", "好像是從一支電視廣告開始的，現在幾乎大家都烤。"], ["What about Lunar New Year?", "那農曆新年呢？", "It's the biggest holiday. Families get together and give red envelopes.", "那是最大的節日，家人團聚，還會發紅包。"], ["That sounds fun.", "聽起來很好玩。", "It is! You should try it with a Taiwanese family.", "真的！你應該跟台灣家庭一起過一次。"]]}]}, {"week": "第6週 介紹台灣", "scenes": [{"id": "b6s1", "name": "推薦美食", "pairs": [["What Taiwanese food should I try?", "我該吃什麼台灣美食？", "You must try beef noodles and soup dumplings. And don't miss bubble tea!", "一定要吃牛肉麵和小籠包，還有別錯過珍珠奶茶！"], ["Is stinky tofu really stinky?", "臭豆腐真的很臭嗎？", "Yes, it smells strong, but it tastes great. Just try a little first.", "對，味道很重，但很好吃，先試一點點。"], ["What's a night market like?", "夜市是什麼樣子？", "It's busy and fun. There's lots of street food and games.", "很熱鬧好玩，有很多小吃和遊戲。"], ["What's your favorite snack?", "你最喜歡什麼小吃？", "I love fried chicken cutlet. It's bigger than my face!", "我最愛炸雞排，比我的臉還大！"]]}, {"id": "b6s2", "name": "推薦景點", "pairs": [["I have one free day in Taipei.", "我在台北有一天空檔。", "Go to Taipei 101 in the morning. Then visit a night market in the evening.", "早上去台北 101，晚上去逛夜市。"], ["Is there any nature near the city?", "城市附近有大自然嗎？", "Yes, try Elephant Mountain. The hike is short, and the view is amazing.", "有，去象山，步道很短，風景超美。"], ["What about outside Taipei?", "台北以外呢？", "Jiufen is beautiful, especially at night. You can also see the ocean.", "九份很美，尤其是晚上，還可以看到海。"], ["How about the south?", "南部呢？", "Kenting has nice beaches. It's great in summer.", "墾丁有很棒的海灘，夏天去最好。"]]}, {"id": "b6s3", "name": "解釋文化", "pairs": [["Why do people wear masks here?", "為什麼這裡的人戴口罩？", "Some people wear them when they have a cold. It's a way to protect others.", "有些人感冒時會戴，是為了保護別人。"], ["Should I tip in restaurants?", "在餐廳要給小費嗎？", "Usually no. Many restaurants add a ten percent service charge.", "通常不用，很多餐廳會加一成服務費。"], ["Why is the number four unlucky?", "為什麼數字四不吉利？", "It sounds like the word for death in Chinese. So some buildings skip the fourth floor.", "因為中文聽起來像「死」，所以有些大樓沒有四樓。"], ["Can I eat on the MRT?", "可以在捷運上吃東西嗎？", "No, eating and drinking aren't allowed. You could get a fine.", "不行，捷運上禁止飲食，可能會被罰款。"]]}]}, {"week": "第7週 旅遊突發狀況", "scenes": [{"id": "b7s1", "name": "班機取消", "pairs": [["I'm sorry, your flight has been canceled.", "抱歉，您的班機取消了。", "Oh no. What should I do now? I need to get home tonight.", "喔不，我現在該怎麼辦？我今晚要回家。"], ["We can put you on the next flight tomorrow.", "我們可以幫您改明天下一班。", "Is there anything earlier? Maybe with another airline?", "有更早的嗎？其他航空公司也可以。"], ["Let me check for you.", "我幫您查一下。", "Thank you. Will you provide a hotel for tonight?", "謝謝，今晚會提供飯店嗎？"], ["Yes, here's a hotel voucher.", "會的，這是飯店住宿券。", "OK. Thank you for your help.", "好，謝謝你的幫忙。"]]}, {"id": "b7s2", "name": "跟飯店反應", "pairs": [["Is everything OK with your room?", "房間還可以嗎？", "Not really. It's very noisy at night. I couldn't sleep.", "不太好，晚上很吵，我睡不著。"], ["I'm sorry to hear that.", "很抱歉。", "Is it possible to change to a quieter room?", "有可能換一間比較安靜的房間嗎？"], ["We have a room on a higher floor.", "我們有一間樓層比較高的。", "That would be great. Can I move this afternoon?", "那太好了，我今天下午可以換嗎？"], ["Of course.", "當然可以。", "Thank you. I really appreciate it.", "謝謝，真的很感激。"]]}, {"id": "b7s3", "name": "迷路求救", "pairs": [["Are you OK?", "你還好嗎？", "I'm lost. I can't find my hotel, and my phone is dead.", "我迷路了，找不到飯店，手機也沒電了。"], ["What's the name of the hotel?", "飯店叫什麼名字？", "It's the Grand Hotel. It's near a big park.", "叫 Grand Hotel，在一個大公園附近。"], ["It's not far. I'll show you.", "不遠，我帶你去。", "Thank you so much. You're very kind.", "太感謝了，你人真好。"], ["Here it is.", "到了。", "Thank you! I don't know what I'd do without you.", "謝謝！沒有你我真不知道該怎麼辦。"]]}]}, {"week": "第8週 深入聊天", "scenes": [{"id": "b8s1", "name": "聊未來計畫", "pairs": [["What are your plans for next year?", "你明年有什麼計畫？", "I want to improve my English. Maybe I'll take a trip abroad alone.", "我想把英文練好，也許會自己出國旅行。"], ["Do you want to work abroad someday?", "你以後想去國外工作嗎？", "Maybe. It would be a great experience, but I'd miss my family.", "也許，那會是很棒的經驗，但我會想家人。"], ["What's your dream?", "你的夢想是什麼？", "I'd like to have my own small business someday.", "我希望有一天能有自己的小生意。"], ["That's a great goal.", "那是很棒的目標。", "Thanks. I'm still saving money for it.", "謝謝，我還在為它存錢。"]]}, {"id": "b8s2", "name": "聊家人", "pairs": [["Do you have any brothers or sisters?", "你有兄弟姊妹嗎？", "I have one older sister. She lives in Taichung with her family.", "我有一個姊姊，她跟家人住在台中。"], ["Are you close?", "你們感情好嗎？", "Yes, we talk almost every day. She's my best friend.", "很好，我們幾乎每天聊天，她是我最好的朋友。"], ["Do you have any pets?", "你有養寵物嗎？", "Yes, I have a cat. She's lazy but very cute.", "有，我養了一隻貓，很懶但很可愛。"], ["What do you do with your family on weekends?", "週末都跟家人做什麼？", "We usually have dinner together. Sometimes we go to the mountains.", "我們通常一起吃飯，有時候去山上走走。"]]}, {"id": "b8s3", "name": "聊學英文", "pairs": [["Your English is really good now!", "你的英文現在很好耶！", "Thank you! I've been practicing every day for a few months.", "謝謝！我已經每天練習好幾個月了。"], ["How did you practice?", "你怎麼練的？", "I listen and repeat every morning. I also try to talk to you guys more.", "我每天早上聽和跟讀，也盡量多跟你們聊天。"], ["Was it hard at first?", "一開始很難嗎？", "Yes, I was so nervous. But now I enjoy it.", "對，我那時超緊張，但現在很享受。"], ["Keep it up!", "繼續加油！", "Thanks! Please correct me if I make mistakes.", "謝謝！我說錯的話請糾正我。"]]}]}]}];
+const LEVELS = [{name:"第一階段 入門",desc:"短句回應，先敢開口",weeks:L1}, ...MORE];
+
+const $ = id => document.getElementById(id);
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let done = new Set(store.get("done",[]));
+let lv = Math.min(store.get("lv",0), LEVELS.length-1);
+let COURSE = LEVELS[lv].weeks;
+let wk = Math.min(store.get("wk",0), COURSE.length-1), sc = Math.min(store.get("sc",0), 2);
+let mode="dialog", rate=0.85, hideEn=false;
+let pairIdx=0, running=false, runId=0;
+let voices=[], themVoice=null, modelVoice=null;
+
+function pickVoices(){
+  if(!("speechSynthesis" in window)){showWarn("這個瀏覽器不支援發音，請改用 Chrome 或手機瀏覽器開啟。");return;}
+  voices = speechSynthesis.getVoices().filter(v=>/^en[-_]/i.test(v.lang));
+  if(!voices.length) return;
+  const us = voices.filter(v=>/en[-_]US/i.test(v.lang));
+  const pool = us.length?us:voices;
+  const nice = n => /Google|Samantha|Aria|Jenny|Natural|Ava|Allison/i.test(n);
+  themVoice = pool.find(v=>nice(v.name)) || pool[0];
+  modelVoice = voices.find(v=>v!==themVoice && nice(v.name)) || voices.find(v=>v!==themVoice) || themVoice;
+}
+if("speechSynthesis" in window){pickVoices();speechSynthesis.onvoiceschanged=pickVoices;}
+else pickVoices();
+
+function showWarn(t){const w=$("warn");w.textContent=t;w.style.display="block"}
+
+function speak(text, voice, r){
+  return new Promise(res=>{
+    if(!("speechSynthesis" in window)) return res();
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang="en-US"; if(voice) u.voice=voice; u.rate=r||rate;
+    let finished=false; const end=()=>{if(!finished){finished=true;res()}};
+    u.onend=end; u.onerror=end;
+    setTimeout(end, 2000 + text.length*180/(r||rate));
+    speechSynthesis.speak(u);
+  });
+}
+
+function countdown(sec,id){
+  return new Promise(res=>{
+    $("turn").hidden=false;
+    const total=sec*1000, start=performance.now(), C=150.8;
+    function tick(now){
+      if(id!==runId){res(false);return;}
+      const left=Math.max(0,total-(now-start));
+      $("num").textContent=Math.ceil(left/1000);
+      $("arc").style.strokeDashoffset = C*(1-left/total);
+      if(left<=0){$("turn").hidden=true;res(true);return;}
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+const pauseFor = t => Math.ceil(Math.max(3, t.split(" ").length*0.75 + 2) / Math.min(rate,1) * 0.85 + 0.5);
+const sleep = (ms,id) => new Promise(r=>setTimeout(()=>r(id===runId),ms));
+
+function scene(){return COURSE[wk].scenes[sc]}
+function show(who, en, zh, opts={}){
+  $("who").textContent=who;
+  const b=$("bubble"); b.classList.toggle("you", !!opts.you);
+  const l=$("line"); l.textContent=en;
+  l.classList.toggle("hidden", !!opts.blur);
+  l.classList.toggle("hint", !!opts.hint);
+  $("zh").textContent=zh;
+  $("count").textContent=`第 ${pairIdx+1} / ${scene().pairs.length} 組`;
+}
+function prompt(msg,sub){$("msg").textContent=msg;$("sub").textContent=sub}
+
+function steps(p){
+  const [q,qz,a,az]=p;
+  if(mode==="dialog") return [
+    {t:"say", who:"對方說", en:q, zh:qz, v:"them"},
+    {t:"turn", who:"換你回答", en:a, zh:az, msg:"換你回答！", sub:"看中文意思，試著用英文說", hint:true},
+    {t:"say", who:"示範回答", en:a, zh:az, v:"model", you:true},
+    {t:"turn", who:"再說一次", en:a, zh:az, msg:"再說一次！", sub:"模仿剛剛的語氣", you:true}
+  ];
+  return [
+    {t:"say", who:"聽：對方的話", en:q, zh:qz, v:"them"},
+    {t:"turn", who:"跟著說", en:q, zh:qz, msg:"換你說！", sub:"跟著唸一次"},
+    {t:"say", who:"聽：你的回答", en:a, zh:az, v:"model", you:true},
+    {t:"turn", who:"跟著說", en:a, zh:az, msg:"換你說！", sub:"跟著唸一次", you:true}
+  ];
+}
+
+async function run(){
+  const id=++runId; running=true; setPlay();
+  const s=scene();
+  while(pairIdx < s.pairs.length){
+    for(const st of steps(s.pairs[pairIdx])){
+      if(id!==runId) return;
+      if(st.t==="say"){
+        $("turn").hidden=true;
+        show(st.who, st.en, st.zh, {you:st.you, blur:hideEn});
+        await speak(st.en, st.v==="them"?themVoice:modelVoice);
+        if(id!==runId) return;
+        if(hideEn){ $("line").classList.remove("hidden"); }
+        if(!await sleep(350,id)) return;
+      } else {
+        show(st.who, st.en, st.zh, {you:st.you, hint:st.hint, blur:hideEn && st.hint});
+        prompt(st.msg, hideEn && st.hint ? "只看中文，用英文說出來" : st.sub);
+        if(!await countdown(pauseFor(st.en), id)) return;
+      }
+    }
+    if(pairIdx < s.pairs.length-1){ pairIdx++; if(!await sleep(500,id)) return; }
+    else break;
+  }
+  done.add(s.id); store.set("done",[...done]);
+  running=false; setPlay(); renderNav();
+  $("turn").hidden=true;
+  $("who").textContent="完成這個情境了！";
+  $("bubble").classList.add("you");
+  $("line").textContent="Great job!"; $("line").className="line en";
+  $("zh").textContent="可以再練一次，或換下一個情境。";
+  pairIdx=0;
+}
+
+function stop(){
+  runId++; running=false;
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  $("turn").hidden=true; setPlay();
+}
+function setPlay(){ $("play").textContent = running ? "❚❚ 暫停" : (pairIdx>0 ? "▶ 繼續" : "▶ 開始"); }
+
+function showPair(){
+  const [q,qz]=scene().pairs[pairIdx];
+  show("對方說", q, qz, {});
+}
+
+function renderNav(){
+  const L=$("levels"); L.innerHTML="";
+  LEVELS.forEach((l,i)=>{
+    const ids=l.weeks.flatMap(w=>w.scenes.map(s=>s.id));
+    const n=ids.filter(id=>done.has(id)).length;
+    const [a,b]=l.name.split(" ");
+    const btn=document.createElement("button");
+    btn.setAttribute("aria-pressed", i===lv);
+    btn.innerHTML=`${b}<small>${a}・${n}/${ids.length}</small>`;
+    btn.onclick=()=>{stop();lv=i;COURSE=LEVELS[lv].weeks;wk=0;sc=0;pairIdx=0;store.set("lv",lv);store.set("wk",0);store.set("sc",0);renderNav();showPair();setPlay();};
+    L.appendChild(btn);
+  });
+  $("lvdesc").textContent = LEVELS[lv].name+"：" + LEVELS[lv].desc + "（每階段 8 週）";
+  const W=$("weeks"); W.innerHTML="";
+  COURSE.forEach((w,i)=>{
+    const total=w.scenes.length, n=w.scenes.filter(s=>done.has(s.id)).length;
+    const b=document.createElement("button");
+    b.className="chip"; b.setAttribute("aria-pressed", i===wk);
+    b.innerHTML = `${w.week} <span class="done">${n?n+"/"+total:""}</span>`;
+    b.onclick=()=>{stop();wk=i;sc=0;pairIdx=0;store.set("wk",wk);store.set("sc",sc);renderNav();showPair();setPlay();};
+    W.appendChild(b);
+  });
+  const S=$("scenes"); S.innerHTML="";
+  COURSE[wk].scenes.forEach((s,i)=>{
+    const b=document.createElement("button");
+    b.className="chip"; b.setAttribute("aria-pressed", i===sc);
+    b.innerHTML = `${s.name}${done.has(s.id)?' <span class="done">✓</span>':""}`;
+    b.onclick=()=>{stop();sc=i;pairIdx=0;store.set("sc",sc);renderNav();showPair();setPlay();};
+    S.appendChild(b);
+  });
+}
+
+$("play").onclick=()=>{ running ? stop() : run(); };
+$("next").onclick=()=>{ const r=running; stop(); pairIdx=Math.min(pairIdx+1, scene().pairs.length-1); showPair(); if(r) run(); };
+$("prev").onclick=()=>{ const r=running; stop(); pairIdx=Math.max(pairIdx-1,0); showPair(); if(r) run(); };
+$("again").onclick=()=>{ stop(); const t=$("line").textContent; $("line").classList.remove("hidden"); speak(t, $("bubble").classList.contains("you")?modelVoice:themVoice); };
+$("slow").onclick=()=>{ stop(); const t=$("line").textContent; $("line").classList.remove("hidden"); speak(t, $("bubble").classList.contains("you")?modelVoice:themVoice, 0.6); };
+
+function seg(id, cb){
+  $(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+    cb(b.dataset.v);
+  });
+}
+seg("modeSeg", v=>{mode=v; stop(); pairIdx=0; showPair();});
+seg("rateSeg", v=>{rate=parseFloat(v);});
+seg("hideSeg", v=>{hideEn = v==="1"; if(!running) $("line").classList.toggle("hidden", hideEn);});
+
+// 錄音比較
+let rec=null, chunks=[];
+$("recBtn").onclick=async ()=>{
+  if(rec && rec.state==="recording"){ rec.stop(); return; }
+  stop();
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    chunks=[]; rec=new MediaRecorder(stream);
+    rec.ondataavailable=e=>chunks.push(e.data);
+    rec.onstop=async ()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      $("recBtn").classList.remove("on"); $("recBtn").textContent="🎙 錄我的聲音";
+      $("recMsg").textContent="播放你的聲音…";
+      const url=URL.createObjectURL(new Blob(chunks,{type:rec.mimeType}));
+      const a=new Audio(url);
+      await new Promise(r=>{a.onended=r;a.onerror=r;a.play().catch(r)});
+      $("recMsg").textContent="接著播示範…";
+      await speak($("line").textContent, modelVoice);
+      $("recMsg").textContent="比一比哪裡不一樣，再錄一次看看";
+    };
+    rec.start();
+    $("recBtn").classList.add("on"); $("recBtn").textContent="■ 說完了，按這裡";
+    $("recMsg").textContent="唸出畫面上的句子";
+  }catch(e){
+    $("recMsg").textContent="這裡無法使用麥克風，可以改用手機內建的錄音 App 錄下來比較。";
+  }
+};
+
+renderNav(); showPair(); setPlay();
+</script>
+</body>
+</html>

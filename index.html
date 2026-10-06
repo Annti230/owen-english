@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Owen 的出國英文對話</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6F3FF;--ink:#183153;--soft:#56708F;--card:#FFFFFF;--line:#CFE3F7;
+  --sun:#FFC93C;--sun-ink:#4A3200;--coral:#FF7A6B;--mint:#3CC9A0;--them:#EAF4FF;--you:#3CC9A0;--you-ink:#06352A;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1E33;--ink:#EAF2FF;--soft:#9FB4D1;--card:#18293F;--line:#2A3F5C;--them:#20354F;--you:#3CC9A0;--you-ink:#06352A;}}
+:root[data-theme="dark"]{--bg:#0F1E33;--ink:#EAF2FF;--soft:#9FB4D1;--card:#18293F;--line:#2A3F5C;--them:#20354F;--you:#3CC9A0;--you-ink:#06352A;}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.55}
+.en{font-family:"Baloo 2","Comic Sans MS","Segoe UI",system-ui,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:18px 14px 40px}
+header{display:flex;align-items:center;gap:12px}
+.badge{width:58px;height:58px;border-radius:18px;background:var(--sun);display:grid;place-items:center;font-size:2rem;flex:0 0 58px;transform:rotate(-6deg)}
+h1{margin:0;font-size:1.35rem;font-weight:900}
+header p{margin:0;color:var(--soft);font-size:.92rem}
+.stars{margin-top:14px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:700}
+.stars .row{font-size:1.4rem;letter-spacing:2px}
+.scenes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:14px 0}
+.scene{font:inherit;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:10px;cursor:pointer;text-align:left;display:flex;gap:8px;align-items:center;font-weight:700;font-size:.95rem}
+.scene .em{font-size:1.6rem}
+.scene .ok{margin-left:auto}
+.scene[aria-pressed="true"]{border-color:var(--coral);box-shadow:0 0 0 3px color-mix(in srgb,var(--coral) 30%,transparent)}
+.stage{background:var(--card);border:2px solid var(--line);border-radius:26px;padding:18px}
+.meta{display:flex;justify-content:space-between;align-items:center;font-size:.9rem;color:var(--soft);margin-bottom:10px}
+.who{font-weight:900;color:var(--ink);font-size:1.05rem}
+.bubble{border-radius:24px;padding:22px 20px;min-height:160px;display:flex;flex-direction:column;justify-content:center;gap:6px;background:var(--them);transition:background .25s}
+.bubble.you{background:var(--you);color:var(--you-ink)}
+.line{font-size:clamp(1.7rem,7vw,2.5rem);font-weight:800;line-height:1.15;margin:0}
+.line.hidden{filter:blur(10px);user-select:none}
+.line.hint{opacity:.55}
+.zh{margin:0;font-size:1.1rem;font-weight:700;opacity:.85}
+.turn{display:flex;align-items:center;gap:14px;margin-top:14px}
+.ring{width:60px;height:60px;position:relative;flex:0 0 60px}
+.ring svg{transform:rotate(-90deg)}
+.ring .num{position:absolute;inset:0;display:grid;place-items:center;font-weight:900;font-size:1.3rem}
+.msg{font-size:1.2rem;font-weight:900}
+.sub{font-size:.9rem;color:var(--soft)}
+.controls{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:700;border:none;border-radius:16px;cursor:pointer;padding:13px 16px;font-size:1rem;background:var(--them);color:var(--ink)}
+.btn.primary{background:var(--sun);color:var(--sun-ink);font-size:1.2rem;font-weight:900;flex:1 1 160px;padding:16px}
+.btn:focus-visible,.scene:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.toggle{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.92rem;color:var(--soft);flex-wrap:wrap}
+.toggle .btn{padding:8px 12px;font-size:.9rem}
+.toggle .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.party{display:none;text-align:center;font-size:3rem;margin-top:10px}
+.party.show{display:block;animation:pop .6s ease}
+@keyframes pop{0%{transform:scale(.3)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+details{margin-top:18px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 16px}
+summary{font-weight:900;cursor:pointer}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px}
+.form label{font-size:.85rem;color:var(--soft);display:block;margin-bottom:4px}
+.form input,.form select{width:100%;font:inherit;font-size:1rem;padding:9px 10px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.note{margin-top:18px;background:var(--sun);color:var(--sun-ink);border-radius:18px;padding:14px 16px;font-size:.92rem;line-height:1.7}
+.warn{display:none;margin-top:10px;background:var(--coral);color:#fff;border-radius:12px;padding:10px 14px;font-size:.9rem}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge" aria-hidden="true">✈️</div>
+    <div><h1 id="title">Owen 的出國英文對話</h1><p>聽一句、說一句，收集所有貼紙吧！</p></div>
+  </header>
+
+  <div class="stars"><span>我的貼紙：</span><span class="row" id="stickers"></span><span id="starCount" style="margin-left:auto;color:var(--soft);font-size:.9rem"></span></div>
+
+  <div class="scenes" id="scenes"></div>
+
+  <section class="stage" aria-live="polite">
+    <div class="meta"><span class="who" id="who">準備好了嗎？</span><span id="count"></span></div>
+    <div class="bubble" id="bubble"><p class="line en" id="line">Ready?</p><p class="zh" id="zh">按「開始」就會開始說英文喔！</p></div>
+    <div class="turn" id="turn" hidden>
+      <div class="ring"><svg width="60" height="60" viewBox="0 0 60 60" aria-hidden="true">
+        <circle cx="30" cy="30" r="26" fill="none" stroke="var(--line)" stroke-width="6"/>
+        <circle id="arc" cx="30" cy="30" r="26" fill="none" stroke="var(--coral)" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="0"/></svg>
+        <span class="num" id="num">3</span></div>
+      <div><div class="msg" id="msg"></div><div class="sub" id="sub"></div></div>
+    </div>
+    <div class="party" id="party">🎉⭐🎉</div>
+    <div class="controls">
+      <button class="btn" id="prev">‹ 上一句</button>
+      <button class="btn primary" id="play">▶ 開始</button>
+      <button class="btn" id="next">下一句 ›</button>
+    </div>
+    <div class="controls">
+      <button class="btn" id="again">🔊 再聽一次</button>
+      <button class="btn" id="slow">🐢 超慢速</button>
+    </div>
+    <div class="toggle">
+      <span>👀 聽力挑戰：</span>
+      <button class="btn" id="showBtn" aria-pressed="true">看得到英文</button>
+      <button class="btn" id="hideBtn" aria-pressed="false">藏起英文</button>
+    </div>
+    <div class="warn" id="warn"></div>
+  </section>
+
+  <details>
+    <summary>👨‍👩‍👦 家長設定：改成孩子自己的答案</summary>
+    <div class="form">
+      <div><label for="fName">英文名字</label><input id="fName" maxlength="20"></div>
+      <div><label for="fAge">年紀</label><select id="fAge"></select></div>
+      <div><label for="fPlay">喜歡玩什麼</label><select id="fPlay"></select></div>
+      <div><label for="fColor">喜歡的顏色</label><select id="fColor"></select></div>
+    </div>
+    <div class="controls"><button class="btn" id="reset">清除貼紙重新開始</button></div>
+  </details>
+
+  <div class="note">
+    <b>給家長的小提醒</b><br>
+    建議大人陪孩子一起練，輪流扮演「外國人」和「孩子自己」，像玩遊戲一樣最有效。<br>
+    名字、年紀、喜歡的東西可以跟外國朋友說；但地址、學校和電話不要告訴陌生人。迷路時要找穿制服的工作人員或警察幫忙，並待在原地不要亂走。<br>
+    請用 Chrome 或 Safari 開啟並打開音量。
+  </div>
+</div>
+
+<script>
+const AGES=[[6,"six","六"],[7,"seven","七"],[8,"eight","八"],[9,"nine","九"],[10,"ten","十"],[11,"eleven","十一"],[12,"twelve","十二"]];
+const PLAYS=[["soccer","足球"],["basketball","籃球"],["baseball","棒球"],["badminton","羽毛球"],["video games","電動"],["with Lego","樂高"],["hide-and-seek","捉迷藏"]];
+const COLORS=[["blue","藍色"],["red","紅色"],["green","綠色"],["yellow","黃色"],["pink","粉紅色"],["purple","紫色"],["orange","橘色"],["black","黑色"]];
+
+const SCENES=[
+ {id:"k1",em:"👋",name:"認識新朋友",pairs:[
+  ["Hi! What's your name?","嗨！你叫什麼名字？","My name is {name}.","我叫 {name}。"],
+  ["How old are you?","你幾歲？","I'm {age} years old.","我{agezh}歲。"],
+  ["Where are you from?","你從哪裡來？","I'm from Taiwan.","我來自台灣。"],
+  ["Nice to meet you!","很高興認識你！","Nice to meet you, too!","我也很高興認識你！"]]},
+ {id:"k2",em:"❤️",name:"我喜歡的東西",pairs:[
+  ["What do you like to play?","你喜歡玩什麼？","I like to play {play}!","我喜歡玩{playzh}！"],
+  ["What's your favorite animal?","你最喜歡什麼動物？","I like pandas. They're so cute!","我喜歡熊貓，牠們好可愛！"],
+  ["What's your favorite color?","你最喜歡什麼顏色？","{Color}! I love {color}.","{colorzh}！我超愛{colorzh}。"],
+  ["Do you like ice cream?","你喜歡冰淇淋嗎？","Yes! I love chocolate ice cream!","喜歡！我最愛巧克力冰淇淋！"]]},
+ {id:"k3",em:"🏃",name:"一起玩遊戲",pairs:[
+  ["Do you want to play with me?","你想跟我一起玩嗎？","Sure! Let's play tag!","好啊！我們來玩鬼抓人！"],
+  ["You're it!","換你當鬼！","Oh no! Here I come!","喔不！我來抓你囉！"],
+  ["Can I try?","我可以試試看嗎？","Sure, here you go!","當然，給你！"],
+  ["That was so fun!","剛剛好好玩！","Let's play again!","我們再玩一次！"]]},
+ {id:"k4",em:"✈️",name:"在飛機上",pairs:[
+  ["Hello! Are you excited?","哈囉！你很興奮嗎？","Yes! This is my first trip!","對！這是我第一次出國！"],
+  ["Chicken or fish?","要雞肉還是魚？","Chicken, please.","雞肉，謝謝。"],
+  ["Would you like some juice?","要喝果汁嗎？","Yes, apple juice, please.","好，蘋果汁，謝謝。"],
+  ["Do you need a blanket?","需要毯子嗎？","Yes, please. Thank you!","要，謝謝你！"]]},
+ {id:"k5",em:"🍔",name:"吃好吃的",pairs:[
+  ["What would you like?","你想吃什麼？","I want a hamburger, please.","我想要漢堡，謝謝。"],
+  ["Do you want fries, too?","也要薯條嗎？","Yes, please!","要！"],
+  ["Is it yummy?","好吃嗎？","Yes, it's super yummy!","好吃，超級好吃！"],
+  ["Are you full?","你吃飽了嗎？","Yes, I'm so full!","對，我好飽喔！"]]},
+ {id:"k6",em:"🦒",name:"去動物園",pairs:[
+  ["Look! What's that?","你看！那是什麼？","It's a giraffe! It's so tall!","是長頸鹿！牠好高！"],
+  ["What's your favorite animal here?","你最喜歡這裡的哪個動物？","The monkeys! They're so funny!","猴子！牠們好好笑！"],
+  ["Can you see the lion?","你看得到獅子嗎？","Yes! It's sleeping.","看到了！牠在睡覺。"],
+  ["Let's take a picture!","我們來拍照吧！","OK! Cheese!","好！笑一個！"]]},
+ {id:"k7",em:"🎢",name:"遊樂園",pairs:[
+  ["Do you want to ride the roller coaster?","你想坐雲霄飛車嗎？","Yes! It looks so fun!","想！看起來好好玩！"],
+  ["Are you scared?","你會怕嗎？","A little, but I'm brave!","有一點，但我很勇敢！"],
+  ["How was it?","好玩嗎？","It was awesome!","超棒的！"],
+  ["What do you want to ride next?","接下來想玩什麼？","The bumper cars!","碰碰車！"]]},
+ {id:"k8",em:"🆘",name:"需要幫忙",pairs:[
+  ["Can I help you?","需要幫忙嗎？","Where is the bathroom, please?","請問廁所在哪裡？"],
+  ["It's over there.","在那邊。","Thank you!","謝謝！"],
+  ["Are you OK?","你還好嗎？","I can't find my mom.","我找不到我媽媽。"],
+  ["Don't worry. Let's find her together.","別擔心，我們一起找她。","Thank you very much!","非常謝謝你！"]]}
+];
+
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem("owen_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("owen_"+k,JSON.stringify(v))}catch(e){}}};
+let prof=Object.assign({name:"Owen",age:9,play:"soccer",color:"blue"},store.get("prof",{}));
+let done=new Set(store.get("done",[]));
+let sc=Math.min(store.get("sc",0),SCENES.length-1), pairIdx=0, running=false, runId=0, hideEn=false;
+const RATE=0.78;
+let themVoice=null, youVoice=null;
+
+function pickVoices(){
+  if(!("speechSynthesis" in window)){warn("這個瀏覽器不能發音，請改用 Chrome 或 Safari 開啟。");return;}
+  const vs=speechSynthesis.getVoices().filter(v=>/^en[-_]/i.test(v.lang)); if(!vs.length) return;
+  const nice=n=>/Google|Samantha|Aria|Jenny|Natural|Ava|Allison|Karen/i.test(n);
+  const us=vs.filter(v=>/en[-_]US/i.test(v.lang)); const pool=us.length?us:vs;
+  themVoice=pool.find(v=>nice(v.name))||pool[0];
+  youVoice=vs.find(v=>v!==themVoice&&nice(v.name))||vs.find(v=>v!==themVoice)||themVoice;
+}
+if("speechSynthesis" in window){pickVoices();speechSynthesis.onvoiceschanged=pickVoices}else pickVoices();
+function warn(t){const w=$("warn");w.textContent=t;w.style.display="block"}
+
+function fill(t){
+  const a=AGES.find(x=>x[0]==prof.age)||AGES[3], p=PLAYS.find(x=>x[0]===prof.play)||PLAYS[0], c=COLORS.find(x=>x[0]===prof.color)||COLORS[0];
+  return t.replaceAll("{name}",prof.name||"Owen").replaceAll("{age}",a[1]).replaceAll("{agezh}",a[2])
+   .replaceAll("{play}",p[0]).replaceAll("{playzh}",p[1]).replaceAll("{Color}",c[0][0].toUpperCase()+c[0].slice(1))
+   .replaceAll("{color}",c[0]).replaceAll("{colorzh}",c[1]);
+}
+const kid=()=>prof.name||"Owen";
+
+function speak(text,voice,r){return new Promise(res=>{
+  if(!("speechSynthesis" in window)) return res();
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang="en-US"; if(voice)u.voice=voice; u.rate=r||RATE;
+  let f=false;const end=()=>{if(!f){f=true;res()}}; u.onend=end;u.onerror=end; setTimeout(end,2000+text.length*200/(r||RATE));
+  speechSynthesis.speak(u);})}
+function countdown(sec,id){return new Promise(res=>{
+  $("turn").hidden=false; const total=sec*1000,start=performance.now(),C=163.4;
+  (function tick(now){ if(id!==runId){res(false);return}
+    const left=Math.max(0,total-(now-start)); $("num").textContent=Math.ceil(left/1000);
+    $("arc").style.strokeDashoffset=C*(1-left/total);
+    if(left<=0){$("turn").hidden=true;res(true);return} requestAnimationFrame(tick);})(start);})}
+const pauseFor=t=>Math.ceil(Math.max(4,t.split(" ").length*0.9+3));
+const sleep=(ms,id)=>new Promise(r=>setTimeout(()=>r(id===runId),ms));
+
+function show(who,en,zh,o={}){
+  $("who").textContent=who; $("bubble").classList.toggle("you",!!o.you);
+  const l=$("line"); l.textContent=en; l.className="line en"+(o.blur?" hidden":"")+(o.hint?" hint":"");
+  $("zh").textContent=zh; $("count").textContent=`第 ${pairIdx+1} / 4 句`;
+}
+function steps(p){const [q,qz,a,az]=p.map(fill);return [
+  {t:"say",who:"🧑 對方說",en:q,zh:qz,v:"them"},
+  {t:"turn",who:`🙋 換 ${kid()} 回答`,en:a,zh:az,msg:`換 ${kid()} 說！`,sub:"看中文意思，用英文說說看",hint:true},
+  {t:"say",who:"⭐ 示範",en:a,zh:az,v:"you",you:true},
+  {t:"turn",who:"🔁 再說一次",en:a,zh:az,msg:"再說一次！",sub:"大聲說出來最棒",you:true}]}
+
+async function run(){
+  const id=++runId; running=true; setPlay(); $("party").classList.remove("show");
+  const s=SCENES[sc];
+  while(pairIdx<s.pairs.length){
+    for(const st of steps(s.pairs[pairIdx])){
+      if(id!==runId) return;
+      if(st.t==="say"){ $("turn").hidden=true; show(st.who,st.en,st.zh,{you:st.you,blur:hideEn});
+        await speak(st.en,st.v==="them"?themVoice:youVoice); if(id!==runId) return;
+        $("line").classList.remove("hidden"); if(!await sleep(400,id)) return;
+      } else {
+        show(st.who,st.en,st.zh,{you:st.you,hint:st.hint,blur:hideEn&&st.hint});
+        $("msg").textContent=st.msg; $("sub").textContent=hideEn&&st.hint?"只看中文，想想英文怎麼說":st.sub;
+        if(!await countdown(pauseFor(st.en),id)) return;
+      }
+    }
+    if(pairIdx<s.pairs.length-1){pairIdx++; if(!await sleep(500,id)) return;} else break;
+  }
+  done.add(s.id); store.set("done",[...done]); running=false; pairIdx=0; setPlay(); render();
+  $("turn").hidden=true; $("bubble").classList.add("you");
+  $("who").textContent=`${s.em} 得到貼紙了！`; $("line").className="line en"; $("line").textContent=`Great job, ${kid()}!`;
+  $("zh").textContent="你好棒！可以再練一次，或去下一關。"; $("count").textContent="";
+  $("party").classList.add("show"); speak(`Great job, ${kid()}!`,themVoice,0.9);
+}
+function stop(){runId++;running=false;if("speechSynthesis" in window)speechSynthesis.cancel();$("turn").hidden=true;setPlay()}
+function setPlay(){$("play").textContent=running?"❚❚ 暫停":(pairIdx>0?"▶ 繼續":"▶ 開始")}
+function showPair(){const [q,qz]=SCENES[sc].pairs[pairIdx].map(fill);$("party").classList.remove("show");show("🧑 對方說",q,qz,{blur:hideEn})}
+
+function render(){
+  $("title").textContent=`${kid()} 的出國英文對話`;
+  const S=$("scenes"); S.innerHTML="";
+  SCENES.forEach((s,i)=>{const b=document.createElement("button");b.className="scene";b.setAttribute("aria-pressed",i===sc);
+    b.innerHTML=`<span class="em">${s.em}</span><span>${s.name}</span><span class="ok">${done.has(s.id)?"⭐":""}</span>`;
+    b.onclick=()=>{stop();sc=i;pairIdx=0;store.set("sc",sc);render();showPair();setPlay()}; S.appendChild(b)});
+  $("stickers").textContent=SCENES.map(s=>done.has(s.id)?s.em:"⬜").join("");
+  $("starCount").textContent=`${done.size} / ${SCENES.length} 關`;
+}
+
+$("play").onclick=()=>running?stop():run();
+$("next").onclick=()=>{const r=running;stop();pairIdx=Math.min(pairIdx+1,3);showPair();if(r)run()};
+$("prev").onclick=()=>{const r=running;stop();pairIdx=Math.max(pairIdx-1,0);showPair();if(r)run()};
+const cur=()=>$("line").textContent, curV=()=>$("bubble").classList.contains("you")?youVoice:themVoice;
+$("again").onclick=()=>{stop();$("line").classList.remove("hidden");speak(cur(),curV())};
+$("slow").onclick=()=>{stop();$("line").classList.remove("hidden");speak(cur(),curV(),0.55)};
+$("showBtn").onclick=()=>{hideEn=false;$("showBtn").setAttribute("aria-pressed","true");$("hideBtn").setAttribute("aria-pressed","false");if(!running)$("line").classList.remove("hidden")};
+$("hideBtn").onclick=()=>{hideEn=true;$("hideBtn").setAttribute("aria-pressed","true");$("showBtn").setAttribute("aria-pressed","false");if(!running)$("line").classList.add("hidden")};
+
+function opts(sel,list,valIdx,label){sel.innerHTML=list.map(x=>`<option value="${x[valIdx]}">${label(x)}</option>`).join("")}
+opts($("fAge"),AGES,0,x=>`${x[0]} 歲（${x[1]}）`);
+opts($("fPlay"),PLAYS,0,x=>`${x[1]}（${x[0]}）`);
+opts($("fColor"),COLORS,0,x=>`${x[1]}（${x[0]}）`);
+$("fName").value=prof.name;$("fAge").value=prof.age;$("fPlay").value=prof.play;$("fColor").value=prof.color;
+function save(){prof={name:$("fName").value.trim()||"Owen",age:+$("fAge").value,play:$("fPlay").value,color:$("fColor").value};store.set("prof",prof);stop();render();showPair()}
+["fName","fAge","fPlay","fColor"].forEach(id=>$(id).addEventListener("change",save));
+$("fName").addEventListener("input",()=>{prof.name=$("fName").value.trim()||"Owen";store.set("prof",prof);render()});
+$("reset").onclick=()=>{if(confirm("確定要清除所有貼紙嗎？")){done=new Set();store.set("done",[]);render()}};
+
+render();showPair();setPlay();
+</script>
+</body>
+</html>
